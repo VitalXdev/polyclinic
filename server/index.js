@@ -1,5 +1,5 @@
 const express = require('express');
-const { insertPatient, getPatientsByDoctorId, getTodaysAppointments, insertAppointment, findPatientByContactNumber, insertDoctor, updateDoctorQRCode,insertUser, findUserByEmail,setNextPatientStatus ,setPatientStatusTreated ,getDoctorIdFromUserId,updateAppointmentStatuses,getPeopleAheadCount,storeOTP, verifyOTP, findUserByPhoneNumber,updateAppointmentStatus, getDoctorNameFromDoctorId} = require('./db');
+const { insertPatient, getDoctorsByClinicId, getPatientsByDoctorId, getTodaysAppointments, insertAppointment, findPatientByContactNumber, insertDoctor, updateDoctorQRCode,insertUser, findUserByEmail,setNextPatientStatus ,setPatientStatusTreated ,getDoctorIdFromUserId,updateAppointmentStatuses,getPeopleAheadCount,storeOTP, verifyOTP, findUserByPhoneNumber,updateAppointmentStatus, getDoctorNameFromDoctorId} = require('./db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const app = express();
@@ -225,6 +225,17 @@ app.post('/auth/register', async (req, res) => {
     res.status(201).json({ token, user, doctor }); // doctor will be undefined if role is not 'doctor'
   } catch (error) {
     console.error('Registration error:', error);
+    res.status(500).send('Server error');
+  }
+});
+
+app.get('/getDoctors', async (req, res) => {
+  const clinicId = req.query.clinicId;
+  try {
+    const doctors = await getDoctorsByClinicId(clinicId);
+    console.log(doctors);
+    res.json(doctors);
+  } catch (error) {
     res.status(500).send('Server error');
   }
 });

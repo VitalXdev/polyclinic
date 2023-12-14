@@ -8,6 +8,7 @@ import "./main.css";
 import { SidebarProvider } from "./services/SidebarContext";
 import QR from "./components/QR";
 import PatientList from "./PatientList";
+import ClinicSelection from "./ClinicSelection"; // Import ClinicSelection
 
 const RedirectToLoginOrForm = () => {
   const location = useLocation();
@@ -33,7 +34,8 @@ function App() {
           <Route path="/" element={<RedirectToLoginOrForm />} />
           <Route path="/doctorview/*" element={<DoctorView />} />
           <Route path="/qr/*" element={<QR />} />
-          <Route path="/patients" element={< PatientList/>} />
+          <Route path="/patients" element={<PatientList />} />
+          <Route path="/clinicId/:clinicId" element={<ClinicSelection />} /> {/* Add this line */}
         </Routes>
       </Router>
     </SidebarProvider>

@@ -301,7 +301,23 @@ const updateAppointmentStatuses = async (doctorId) => {
   }
 };
 
+const getDoctorsByClinicId = async (clinicId) => {
+  // Assuming you are using some database library like pg
+  const query = 'SELECT doctor_id, doctor_name FROM doctor WHERE clinic_id = $1';
+  console.log(query);
+  const values = [clinicId];
+
+  try {
+    const result = await pool.query(query, values);
+    console.log(result.rows);
+    return result.rows;
+  } catch (err) {
+    console.error('Error executing query', err.stack);
+    throw err;
+  }
+};
 
 
 
-module.exports = { insertPatient,getTodaysAppointments,getPatientsByDoctorId, updateAppointmentStatus,insertAppointment, findPatientByContactNumber, insertDoctor, updateDoctorQRCode,insertUser, findUserByEmail, setNextPatientStatus ,setPatientStatusTreated,getDoctorIdFromUserId,updateAppointmentStatuses,getPeopleAheadCount,storeOTP, verifyOTP, findUserByPhoneNumber,getDoctorNameFromDoctorId};
+
+module.exports = { insertPatient, getDoctorsByClinicId, getTodaysAppointments,getPatientsByDoctorId, updateAppointmentStatus,insertAppointment, findPatientByContactNumber, insertDoctor, updateDoctorQRCode,insertUser, findUserByEmail, setNextPatientStatus ,setPatientStatusTreated,getDoctorIdFromUserId,updateAppointmentStatuses,getPeopleAheadCount,storeOTP, verifyOTP, findUserByPhoneNumber,getDoctorNameFromDoctorId};
