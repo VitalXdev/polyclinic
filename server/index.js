@@ -13,24 +13,6 @@ const path = require('path');
 
 require('dotenv').config();
 
-// const __dirname = path.dirname("")
-const buildPath = path.join(__dirname  , "../client/build");
-
-app.use(express.static(buildPath))
-
-app.get("/*", function(req, res){
-  // console.log(path.join(__dirname, "../client/build/index.html"));
-    res.sendFile(
-        path.join(__dirname, "../client/build/index.html"),
-        function (err) {
-          if (err) {
-            res.status(500).send(err);
-          }
-        }
-      );
-
-})
-
 
 const corsOptions = {
   origin: "*",
@@ -96,15 +78,15 @@ const generateOTP = () => {
 
 app.post('/generateOTP', async (req, res) => {
   const { phoneNumber } = req.body;
-  const otp = generateOTP();
-  // const otp = 1234;
+  // const otp = generateOTP();
+  const otp = 1234;
 
   try {
     await storeOTP(phoneNumber, otp);
     // Send OTP via SMS
-    const url=`http://control.yourbulksms.com/api/sendhttp.php?authkey=39306c4031323332303650&mobiles=91${phoneNumber}&message=OTP ${otp} ERP login : VITALX EVOKES&sender=URBLKM&route=2&country=91&DLT_TE_ID=1707169641090797992`;
-    const response = await axios.get(url);
-    console.log(response.data); // Log the response from the SMS service for debugging
+    // const url=`http://control.yourbulksms.com/api/sendhttp.php?authkey=39306c4031323332303650&mobiles=91${phoneNumber}&message=OTP ${otp} ERP login : VITALX EVOKES&sender=URBLKM&route=2&country=91&DLT_TE_ID=1707169641090797992`;
+    // const response = await axios.get(url);
+    // console.log(response.data); // Log the response from the SMS service for debugging
     res.json({ success: true, message: "OTP sent successfully." });
   } catch (error) {
     console.error(error);
@@ -265,10 +247,12 @@ app.get('/getDoctorId', async (req, res) => {
 
 app.post('/auth/login', async (req, res) => {
   const { email, password } = req.body;
+  console.log(email, password);
   try {
     const user = await findUserByEmail(email);
     const doctorId=await getDoctorIdFromUserId(user.user_id);
     const doctorName= await getDoctorNameFromDoctorId(doctorId);
+    console.log(user, doctorId, doctorName);
     if (user && await bcrypt.compare(password, user.hashed_password)) {
       const token = jwt.sign({ user_id: user.user_id, role: user.role, doctor_id: doctorId,doctorName: doctorName }, process.env.JWT_SECRET, { expiresIn: '1h' });
       res.json({ token, role: user.role });
@@ -307,9 +291,9 @@ app.post('/appointments/next', async (req, res) => {
 });
 
 
-// app.get('/', (req, res) => {
-//   res.send('Hello, VitalX!');
-// });
+app.get('/', (req, res) => {
+  res.send('Hello, VitalX!');
+});
 
 app.get('/appointments/today', async (req, res) => {
   const userId = req.query.userId; // Assuming you pass doctorId as a query parameter
