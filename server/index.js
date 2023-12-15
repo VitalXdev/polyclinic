@@ -7,29 +7,29 @@ const cors = require('cors');
 const port = process.env.PORT || 5001;
 const { createServer } = require('http');
 const { Server } = require('socket.io');
-const axios = require('axios');
-const path = require('path');
+// const axios = require('axios');
+// const path = require('path');
 
 
 require('dotenv').config();
 
 // const __dirname = path.dirname("")
-const buildPath = path.join(__dirname  , "../client/build");
+// const buildPath = path.join(__dirname  , "../client/build");
 
-app.use(express.static(buildPath))
+// app.use(express.static(buildPath))
 
-app.get("/*", function(req, res){
-  // console.log(path.join(__dirname, "../client/build/index.html"));
-    res.sendFile(
-        path.join(__dirname, "../client/build/index.html"),
-        function (err) {
-          if (err) {
-            res.status(500).send(err);
-          }
-        }
-      );
+// app.get("/*", function(req, res){
+//   // console.log(path.join(__dirname, "../client/build/index.html"));
+//     res.sendFile(
+//         path.join(__dirname, "../client/build/index.html"),
+//         function (err) {
+//           if (err) {
+//             res.status(500).send(err);
+//           }
+//         }
+//       );
 
-})
+// })
 
 
 const corsOptions = {
@@ -310,9 +310,9 @@ app.post('/appointments/next', async (req, res) => {
 });
 
 
-// app.get('/', (req, res) => {
-//   res.send('Hello, VitalX!');
-// });
+app.get('/', (req, res) => {
+  res.send('Hello, VitalX!');
+});
 
 app.get('/appointments/today', async (req, res) => {
   const userId = req.query.userId; // Assuming you pass doctorId as a query parameter
