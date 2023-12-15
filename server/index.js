@@ -35,7 +35,9 @@ app.get("/*", function(req, res){
 const corsOptions = {
   // origin: "*",
   origin: ['http://localhost:3000', 'https://thriving-bonbon-27d691.netlify.app', 'https://app.vitalx.in', 'https://dev.vitalx.in', 'https://admirable-taiyaki-b2b323.netlify.app'],
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+  optionsSuccessStatus: 200,
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // some legacy browsers (IE11, various SmartTVs) choke on 204,
+  allowedHeaders: "Content-Type, Authorization, X-Custom-Header",
 };
 
 app.use(cors(corsOptions));
