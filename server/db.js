@@ -6,7 +6,11 @@ const pool = new Pool({
   host: process.env.PGHOST,
   database: process.env.PGDATABASE,
   password: process.env.PGPASSWORD,
-  port: process.env.PGPORT
+  port: process.env.PGPORT,
+  ssl: {
+    rejectUnauthorized: true,
+    ca: fs.readFileSync('/home/ubuntu/ClinicQMS/certs/ap-south-1-bundle.pem').toString()
+  }
 });
 
 const insertPatient = async (patientName, patientAge, patientWeight, patientContactNumber, gender) => {
