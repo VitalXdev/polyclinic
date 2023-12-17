@@ -7,6 +7,10 @@ const cors = require('cors');
 const port = process.env.PORT || 5001;
 const { createServer } = require('http');
 const { Server } = require('socket.io');
+
+const { getPublicKey, requestOtp, enrollByAadhaar, verifyByAbdm, createAbhaAddress } =require( './abdm.js');
+
+
 // const axios = require('axios');
 // const path = require('path');
 
@@ -333,6 +337,37 @@ app.get('/appointments/today', async (req, res) => {
     res.status(500).send('Server error');
   }
 });
+
+
+app.get('/auth/cert', async (req, res) => {
+  try {
+    const publicKey = await getPublicKey();
+    res.json(publicKey);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+app.post('/enrollment/request/otp', async (req, res) => {
+  try {
+    const { aadhaarNumber } = req.body;
+    const response = await requestOtp(aadhaarNumber);
+    res.json(response);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+app.post('/enrollment/enrol/byAadhaar', async (req, res) => {
+  try {
+    const { otp, transactionId } = req.body;
+    const response = await enrollByAadhaar(otp, transactionId);
+    res.json(response);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
 
 httpServer.listen(port, () => {
   console.log(`Server running on port ${port}`);

@@ -8,6 +8,7 @@ import "./main.css";
 import { SidebarProvider } from "./services/SidebarContext";
 import QR from "./components/QR";
 import PatientList from "./PatientList";
+import AadhaarVerification from "./AadhaarVerification";
 
 const RedirectToLoginOrForm = () => {
   const location = useLocation();
@@ -34,6 +35,7 @@ function App() {
           <Route path="/doctorview/*" element={<DoctorView />} />
           <Route path="/qr/*" element={<QR />} />
           <Route path="/patients" element={< PatientList/>} />
+          <Route path="/abdm" element={<AadhaarVerification />}/>
         </Routes>
       </Router>
     </SidebarProvider>
