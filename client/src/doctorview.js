@@ -5,11 +5,75 @@ import { io } from "socket.io-client";
 import AdminLayout from "./AdminLayout";
 import MyTable from "./components/MyTable";
 import MyBreakcrumbs from "./components/MyBreadcrumbs";
+import AddPatientModal from "./components/AddPatientModal";
 
 const DoctorView = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
   const [appointments, setAppointments] = useState([]);
+  const [showAddPatientForm, setShowAddPatientForm] = useState(false);
+  const [errorMessage, setErrorMessage]=useState("");
+
+  const [name, setName] = useState('');
+  const [age, setAge] = useState('');
+  const [weight, setWeight] = useState('');
+  const [gender, setGender] = useState('');
+
+
+  const handleAddPatientSubmit = async (event) => {
+
+    const token = localStorage.getItem("token");
+    const decodedToken = jwtDecode(token);
+    // Logic to collect form data and make API call
+
+      setErrorMessage(""); // Assuming you have a state to manage error messages
+    
+      // Create patient data object from the state or form inputs
+      const patientData = {
+        patient_name: name, 
+        patient_age: age,  
+        patient_weight: weight,
+        gender: gender,   
+        patient_contact_number: null, 
+        doctor_id: decodedToken.doctor_id 
+      };
+    
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/register`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(patientData),
+        });
+    
+        if (response.ok) {
+          // const data = await response.json();
+
+          // Assuming you have a method to refresh the appointments table
+          fetchAppointments(decodedToken);
+          setShowAddPatientForm(false); // Close the add patient form/modal
+        } else {
+          // Handle server errors (response not OK)
+          const errorMsg = await response.text();
+          console.error("Registration failed:", errorMsg);
+          setErrorMessage(errorMsg);
+        }
+      } catch (error) {
+        // Handle network errors
+        console.error("Network error:", error);
+        setErrorMessage("Network error, please try again later.");
+      } finally {
+        //
+      }
+
+    //end of logic
+    setShowAddPatientForm(false);
+  };
+
+  const handleOpenAddPatientForm = () => {
+    setShowAddPatientForm(true);
+  };
 
   const fetchAppointments = async (decodedToken) => {
     const token = localStorage.getItem("token");
@@ -243,6 +307,26 @@ const DoctorView = () => {
             />
           </div>
           {/* Render the table */}
+          <button
+            onClick={handleOpenAddPatientForm}
+            className="fixed bottom-4 right-4 bg-blue-500 hover:bg-blue-700 text-white font-bold p-0 h-12 w-12 rounded-full text-3xl shadow-lg flex items-center justify-center z-50"
+            aria-label="Add Patient"
+          >
+            +
+          </button>
+          <AddPatientModal
+            isOpen={showAddPatientForm}
+            onClose={() => setShowAddPatientForm(false)}
+            onSubmit={handleAddPatientSubmit}
+            name={name}
+            setName={setName}
+            age={age}
+            setAge={setAge}
+            weight={weight}
+            setWeight={setWeight}
+            gender={gender}
+            setGender={setGender}
+          />
           <div className="px-5 py-5">
             <button
               onClick={handleNextPatient}
@@ -252,6 +336,8 @@ const DoctorView = () => {
             </button>{" "}
           </div>
         </div>
+
+        
       </div>
       {/* other compoent  */}
     </AdminLayout>

@@ -72,12 +72,18 @@ app.post('/register', async (req, res) => {
   try {
     const { patient_name, patient_age, patient_weight, patient_contact_number, doctor_id, gender } = req.body;
     // Check if patient already exists
-    let patient = await findPatientByContactNumber(patient_contact_number);
-
-    if (!patient) {
-      // If patient doesn't exist, create new patient
-      patient = await insertPatient(patient_name, patient_age, patient_weight, patient_contact_number, gender);
+    let patient;
+    if (patient_contact_number){
+      patient = await findPatientByContactNumber(patient_contact_number);
+      if (!patient) {
+        // If patient doesn't exist, create new patient
+        patient = await insertPatient(patient_name, patient_age, patient_weight, patient_contact_number, gender);
+      }
     }
+    else {
+        patient = await insertPatient(patient_name, patient_age, patient_weight, patient_contact_number, gender);
+    }
+   
 
     // Create a new appointment with doctorId
     const { appointment, peopleAhead } = await insertAppointment(patient.patient_id, doctor_id);
