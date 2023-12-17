@@ -56,8 +56,8 @@ const DoctorView = () => {
         } else {
           // Handle server errors (response not OK)
           const errorMsg = await response.text();
-          console.error("Registration failed:", errorMsg);
           setErrorMessage(errorMsg);
+          console.log(errorMessage);
         }
       } catch (error) {
         // Handle network errors

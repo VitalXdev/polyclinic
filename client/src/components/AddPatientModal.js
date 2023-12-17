@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 
 const AddPatientModal = ({ isOpen, onClose, onSubmit, name, setName, age, setAge, weight, setWeight, gender, setGender }) => {
 
