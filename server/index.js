@@ -8,36 +8,19 @@ const port = process.env.PORT || 5001;
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 // const axios = require('axios');
-// const path = require('path');
+const path = require('path');
 
 
 require('dotenv').config();
 
-// const __dirname = path.dirname("")
-// const buildPath = path.join(__dirname  , "../client/build");
 
-// app.use(express.static(buildPath))
-
-// app.get("/*", function(req, res){
-//   // console.log(path.join(__dirname, "../client/build/index.html"));
-//     res.sendFile(
-//         path.join(__dirname, "../client/build/index.html"),
-//         function (err) {
-//           if (err) {
-//             res.status(500).send(err);
-//           }
-//         }
-//       );
-
-// })
-
+// app.get('/', (req, res) => {
+//   res.send('Hello, VitalX!');
+// });
 
 const corsOptions = {
-  // origin: "*",
-  origin: ['http://localhost:3000', 'https://thriving-bonbon-27d691.netlify.app', 'https://app.vitalx.in', 'https://dev.vitalx.in', 'https://admirable-taiyaki-b2b323.netlify.app'],
-  optionsSuccessStatus: 200,
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // some legacy browsers (IE11, various SmartTVs) choke on 204,
-  allowedHeaders: "Content-Type, Authorization, X-Custom-Header",
+  origin: "*",
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
 app.use(cors(corsOptions));
@@ -309,15 +292,10 @@ app.post('/appointments/next', async (req, res) => {
   }
 });
 
-
-app.get('/', (req, res) => {
-  res.send('Hello, VitalX!');
-});
-
 app.get('/appointments/today', async (req, res) => {
   const userId = req.query.userId; // Assuming you pass doctorId as a query parameter
   const date = req.query.date; // Optional: if a date is passed as a query parameter
-  console.log(userId, date);
+  console.log('ye hai: ',userId, date);
   try {
     const appointments = await getTodaysAppointments(userId, date ? new Date(date) : undefined);
     res.json(appointments);
@@ -331,3 +309,19 @@ app.get('/appointments/today', async (req, res) => {
 httpServer.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
+const buildPath = path.join(__dirname  , "../client/build");
+app.use(express.static(buildPath))
+
+app.get("/*", function(req, res){
+  // console.log(path.join(__dirname, "../client/build/index.html"));
+    res.sendFile(
+        path.join(__dirname, "../client/build/index.html"),
+        function (err) {
+          if (err) {
+            res.status(500).send(err);
+          }
+        }
+      );
+
+})

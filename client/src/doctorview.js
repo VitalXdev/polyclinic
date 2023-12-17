@@ -26,6 +26,7 @@ const DoctorView = () => {
       );
       if (response.ok) {
         const appointmentsData = await response.json();
+        console.log(appointmentsData);
         setAppointments(appointmentsData);
       } else {
         console.error("Failed to fetch appointments", response);
