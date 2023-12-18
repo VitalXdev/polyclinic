@@ -33,8 +33,8 @@ require('dotenv').config();
 
 
 const corsOptions = {
-  // origin: "*",
-  origin: ['http://localhost:3000', 'https://thriving-bonbon-27d691.netlify.app', 'https://app.vitalx.in', 'https://dev.vitalx.in', 'https://admirable-taiyaki-b2b323.netlify.app'],
+  origin: "*",
+  origin: ['http://localhost:3000', 'https://thriving-bonbon-27d691.netlify.app', 'https://app.vitalx.in', 'https://dev.vitalx.in', 'https://admirable-taiyaki-b2b323.netlify.app', 'https://beta.vitalx.in'],
   optionsSuccessStatus: 200,
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // some legacy browsers (IE11, various SmartTVs) choke on 204,
   allowedHeaders: "Content-Type, Authorization, X-Custom-Header",
@@ -139,13 +139,14 @@ app.post('/verifyOTP', async (req, res) => {
   try {
     const isVerified = await verifyOTP(phoneNumber, otp);
     if (isVerified) {
-      res.json({ success: true, patientExists: await findPatientByContactNumber(phoneNumber), message: "OTP verified successfully." });
+      const patientExists = await findPatientByContactNumber(phoneNumber);
+      res.json({ success: true, patientExists: patientExists, message: "OTP verified successfully." });
     } else {
-      res.status(401).send('Invalid OTP');
+      res.status(400).json({ success: false, message: "Invalid OTP" }); // Use 400 for client errors
     }
   } catch (error) {
     console.error('Error verifying OTP:', error);
-    res.status(500).send('Server error');
+    res.status(500).send({ success: false, message: 'Server error' }); // Server error response
   }
 });
 

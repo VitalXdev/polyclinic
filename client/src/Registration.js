@@ -33,9 +33,8 @@ const Registration = () => {
       );
       setStep(2);
       const data = await response.json();
-
       if (data.success) {
-        console.log(data.message);
+        
         // Handle UI changes, like showing an input field for entering OTP
       } else {
         // Handle the case where OTP sending failed
@@ -53,33 +52,31 @@ const Registration = () => {
       phoneNumber: phoneNumber,
       otp: otp,
     };
-
+  
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/verifyOTP`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(otpPayload),
-        }
-      );
-      setStep(3);
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/verifyOTP`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(otpPayload),
+      });
+  
       const data = await response.json();
-
-      if (data.success) {
-        console.log(data.message);
-        // Set your state based on the response
+  
+      if (response.ok) {
+        console.log('Verification success:', data);
         setIsOtpVerified(true);
+        setStep(3); // Move to next step only if OTP is verified
       } else {
-        console.error("Invalid OTP");
-        // Set your state based on the response
+        console.error("Verification failed:", data.message);
         setIsOtpVerified(false);
+        alert(data.message); // Display error message from server
       }
     } catch (error) {
       console.error("Error verifying OTP:", error);
-      // Handle errors, maybe show a message to the user
+      setIsOtpVerified(false);
+      alert("Error verifying OTP"); // Generic error message
     }
   };
 
