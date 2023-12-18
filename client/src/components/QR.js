@@ -51,7 +51,7 @@ const QR = () => {
     >
       {doctorId && (
         <QRCode
-          value={`https://app.vitalx.in/?doctorId=${doctorId}`}
+          value={`https://dev.vitalx.in/?doctorId=${doctorId}`}
           size={256}
           level={"H"}
           includeMargin={true}
