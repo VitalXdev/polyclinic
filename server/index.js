@@ -149,9 +149,10 @@ app.post('/verifyOTP', async (req, res) => {
   }
 });
 
-app.post('/appointments/checkin/:appointmentId', async (req, res) => {
+app.post('/appointments/checkin', async (req, res) => {
   try {
-      const appointmentId = req.params.appointmentId;
+      const {appointmentId} = req.body;
+      console.log('ye hai app id:',appointmentId);
       // Assuming there's a function in db.js to update appointment status
       await updateAppointmentStatus(appointmentId, 1); // The new status might be 'Checked-In' or something similar
       res.status(200).send('Appointment status updated');

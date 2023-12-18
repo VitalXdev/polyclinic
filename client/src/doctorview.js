@@ -128,19 +128,20 @@ const DoctorView = () => {
   };
 
   const handleCheckIn = async (appointmentId) => {
+    console.log('mai hu na: ',appointmentId);
     const token = localStorage.getItem("token");
     const decodedToken = jwtDecode(token);
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/appointments/checkin/${appointmentId}`, // Adjust the URL according to your API endpoint
+        `${process.env.REACT_APP_API_URL}/appointments/checkin`, // Adjust the URL according to your API endpoint
         {
           method: "POST", // or PUT, depending on your API design
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ userId: decodedToken.user_id }), // Include any other necessary data
+          body: JSON.stringify({ appointmentId: appointmentId }), // Include any other necessary data
         }
       );
 
@@ -238,7 +239,10 @@ const DoctorView = () => {
           return (
             <button
               className=" px-2.5 py-1 bg-[#2E37A4] rounded-md shadow-lg text-[12px] xl:text-sm text-white cursor-pointer hover:bg-[#1a238f]"
-              onClick={() => handleCheckIn(row.original.id)}
+              onClick={() => {
+                console.log(appointments); // Log the entire row data for inspection
+                handleCheckIn(row.original.seq_no); // Call the handleCheckIn function with the appointment ID
+              }}
             >
               Check-in
             </button>
