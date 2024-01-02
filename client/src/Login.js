@@ -75,7 +75,7 @@ const Login = () => {
         // Handle UI changes, like showing an input field for entering OTP
       } else {
         // Handle the case where OTP sending failed
-        console.error("Failed to send OT");
+        console.error("Failed to send");
       }
     } catch (error) {
       console.log(error);
