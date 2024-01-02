@@ -24,7 +24,7 @@ const DoctorView = () => {
 
     const token = localStorage.getItem("token");
     const decodedToken = jwtDecode(token);
-    // Logic to collect form data and make API call
+    // Logic to collect form data and make API calls
 
       setErrorMessage(""); // Assuming you have a state to manage error messages
     
