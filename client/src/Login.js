@@ -41,7 +41,7 @@ const Login = () => {
             break;
           default:
             // Handle other roles or lack thereof
-            throw new Error("Unknown role");
+            throw new Error("Unknown role this ");
         }
       } else {
         // Handle errors, such as showing an alert to the user
