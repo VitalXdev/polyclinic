@@ -41,7 +41,7 @@ const Login = () => {
             break;
           default:
             // Handle other roles or lack thereof
-            throw new Error("Unknown role  ");
+            throw new Error("Unknown role this");
         }
       } else {
         // Handle errors, such as showing an alert to the user
@@ -75,7 +75,7 @@ const Login = () => {
         // Handle UI changes, like showing an input field for entering OTP
       } else {
         // Handle the case where OTP sending failed
-        console.error("Failed to send");
+        console.error("Failed to send OTP");
       }
     } catch (error) {
       console.log(error);
