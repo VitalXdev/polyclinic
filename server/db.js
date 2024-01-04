@@ -17,6 +17,14 @@ const insertPatient = async (patientName, patientAge, patientWeight, patientCont
   return res.rows[0];
 };
 
+const insertUserDetails=async (doctor_name,contactid)=>{
+  const res=await pool.query(
+   'INSERT INTO public.User (name,contact_info_id) VALUES ($1,$2) RETURNING user_id',
+   [doctor_name,contactid]
+  );
+  return res.rows[0];
+ }
+ 
 const getDoctorIdFromUserId = async (userId) => {
   const res = await pool.query(
     'SELECT doctor_id FROM doctor WHERE user_id = $1',
@@ -189,21 +197,13 @@ const updateDoctorQRCode = async (doctorId, qrCodeUrl) => {
   await pool.query('UPDATE Doctor SET qr_code_url = $1 WHERE doctor_id = $2', [qrCodeUrl, doctorId]);
 };
 
-const insertDoctor = async (userId, doctorName, clinicName) => {
-  // Insert doctor without QR code URL initially
+const insertDoctor = async (userId, contactId) => {
+  // Insert data to Doctor Table
   const insertRes = await pool.query(
-    'INSERT INTO Doctor(user_id, doctor_name, clinic_name ) VALUES($1, $2, $3) RETURNING doctor_id',
-    [userId, doctorName, clinicName]
+    'INSERT INTO Doctor(user_id, doctor_contact_info_id ) VALUES($1, $2) RETURNING doctor_id',
+    [userId, contactId]
   );
-  const doctorId = insertRes.rows[0].doctor_id;
-
-  // Generate QR Code URL with doctor_id
-  const qrCodeURL = `https://app.vitalx.in/?doctorId=${doctorId}`;
-
-  // Update doctor with QR code URL
-  await pool.query('UPDATE Doctor SET qr_code_url = $1 WHERE doctor_id = $2', [qrCodeURL, doctorId]);
-
-  return { doctor_id: doctorId, doctor_name: doctorName, clinic_name: clinicName, qr_code_url: qrCodeURL };
+  return insertRes.rows[0]; 
 };
 
 const getPeopleAheadCount = async (appointmentNumber, doctorId) => {
@@ -349,4 +349,4 @@ const updateAppointmentStatuses = async (doctorId) => {
 
 
 
-module.exports = { insertPatient,getTodaysAppointments,getPatientsByDoctorId, updateAppointmentStatus,insertAppointment, findPatientByContactNumber, insertDoctor, updateDoctorQRCode,insertUser, findUserByEmail, setNextPatientStatus ,setPatientStatusTreated,getDoctorIdFromUserId,updateAppointmentStatuses, getPeopleAheadCount, storeOTP, verifyOTP, findUserByPhoneNumber, getDoctorNameFromDoctorId, insertUserContactInfo, insertUserAuthentication};
+module.exports = { insertPatient,getTodaysAppointments,getPatientsByDoctorId, updateAppointmentStatus,insertAppointment, findPatientByContactNumber, insertDoctor, updateDoctorQRCode,insertUser, findUserByEmail, setNextPatientStatus ,setPatientStatusTreated,getDoctorIdFromUserId,updateAppointmentStatuses, getPeopleAheadCount, storeOTP, verifyOTP, findUserByPhoneNumber, getDoctorNameFromDoctorId, insertUserContactInfo, insertUserAuthentication, insertUserDetails};
