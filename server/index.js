@@ -1,5 +1,9 @@
 const express = require('express');
-const { insertPatient, getPatientsByDoctorId, getTodaysAppointments, insertAppointment, findPatientByContactNumber, insertDoctor, updateDoctorQRCode,insertUser, findUserByEmail,setNextPatientStatus ,setPatientStatusTreated ,getDoctorIdFromUserId,updateAppointmentStatuses,getPeopleAheadCount,storeOTP, verifyOTP, findUserByPhoneNumber,updateAppointmentStatus, getDoctorNameFromDoctorId} = require('./db');
+const { insertPatient, getPatientsByDoctorId, getTodaysAppointments, insertAppointment, findPatientByContactNumber, 
+  insertDoctor, updateDoctorQRCode,insertUser, findUserByEmail,setNextPatientStatus ,setPatientStatusTreated ,
+  getDoctorIdFromUserId,updateAppointmentStatuses,getPeopleAheadCount,
+  storeOTP, verifyOTP, findUserByPhoneNumber,updateAppointmentStatus,
+   getDoctorNameFromDoctorId,insertUserContactInfo,insertUserAuthentication,insertUserDetails} = require('./db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const app = express();
@@ -8,13 +12,36 @@ const port = process.env.PORT || 5001;
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 const axios = require('axios');
+// const path = require('path');
 
 
 require('dotenv').config();
 
+// const __dirname = path.dirname("")
+// const buildPath = path.join(__dirname  , "../client/build");
+
+// app.use(express.static(buildPath))
+
+// app.get("/*", function(req, res){
+//   // console.log(path.join(__dirname, "../client/build/index.html"));
+//     res.sendFile(
+//         path.join(__dirname, "../client/build/index.html"),
+//         function (err) {
+//           if (err) {
+//             res.status(500).send(err);
+//           }
+//         }
+//       );
+
+// })
+
+
 const corsOptions = {
-  origin: ['http://localhost:3000', 'https://thriving-bonbon-27d691.netlify.app', 'https://app.vitalx.in', 'https://dev.vitalx.in', 'https://admirable-taiyaki-b2b323.netlify.app'],
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+  origin: "*",
+  origin: ['http://localhost:3000', 'https://thriving-bonbon-27d691.netlify.app', 'https://app.vitalx.in', 'https://dev.vitalx.in', 'https://admirable-taiyaki-b2b323.netlify.app', 'https://beta.vitalx.in'],
+  optionsSuccessStatus: 200,
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // some legacy browsers (IE11, various SmartTVs) choke on 204,
+  allowedHeaders: "Content-Type, Authorization, X-Custom-Header",
 };
 
 app.use(cors(corsOptions));
@@ -49,12 +76,18 @@ app.post('/register', async (req, res) => {
   try {
     const { patient_name, patient_age, patient_weight, patient_contact_number, doctor_id, gender } = req.body;
     // Check if patient already exists
-    let patient = await findPatientByContactNumber(patient_contact_number);
-
-    if (!patient) {
-      // If patient doesn't exist, create new patient
-      patient = await insertPatient(patient_name, patient_age, patient_weight, patient_contact_number, gender);
+    let patient;
+    if (patient_contact_number){
+      patient = await findPatientByContactNumber(patient_contact_number);
+      if (!patient) {
+        // If patient doesn't exist, create new patient
+        patient = await insertPatient(patient_name, patient_age, patient_weight, patient_contact_number, gender);
+      }
     }
+    else {
+        patient = await insertPatient(patient_name, patient_age, patient_weight, patient_contact_number, gender);
+    }
+   
 
     // Create a new appointment with doctorId
     const { appointment, peopleAhead } = await insertAppointment(patient.patient_id, doctor_id);
@@ -110,19 +143,21 @@ app.post('/verifyOTP', async (req, res) => {
   try {
     const isVerified = await verifyOTP(phoneNumber, otp);
     if (isVerified) {
-      res.json({ success: true, patientExists: await findPatientByContactNumber(phoneNumber), message: "OTP verified successfully." });
+      const patientExists = await findPatientByContactNumber(phoneNumber);
+      res.json({ success: true, patientExists: patientExists, message: "OTP verified successfully." });
     } else {
-      res.status(401).send('Invalid OTP');
+      res.status(400).json({ success: false, message: "Invalid OTP" }); // Use 400 for client errors
     }
   } catch (error) {
     console.error('Error verifying OTP:', error);
-    res.status(500).send('Server error');
+    res.status(500).send({ success: false, message: 'Server error' }); // Server error response
   }
 });
 
-app.post('/appointments/checkin/:appointmentId', async (req, res) => {
+app.post('/appointments/checkin', async (req, res) => {
   try {
-      const appointmentId = req.params.appointmentId;
+      const {appointmentId} = req.body;
+      console.log('ye hai app id:',appointmentId);
       // Assuming there's a function in db.js to update appointment status
       await updateAppointmentStatus(appointmentId, 1); // The new status might be 'Checked-In' or something similar
       res.status(200).send('Appointment status updated');
@@ -199,9 +234,16 @@ app.post('/auth/register', async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Insert user and get user_id
-    const user = await insertUser(email, hashedPassword, role, phone_number, isMobileOTPAuthenticated);
+    // Insert data into contact_info and store it's result to variable contact
+    const contact = await insertUserContactInfo(phone_number,email);
 
+
+    // Insert into authentication table
+    await insertUserAuthentication(contact.contact_info_id,hashedPassword)  
+
+    // Insert into User (Name,Contact_id) {storing user data}
+     const contact_id=contact.contact_info_id;
+    const newuser=await insertUserDetails(doctor_name,contact_id);
     let doctor;
     if (role === 'doctor') {
       // Insert doctor and get doctor_id
