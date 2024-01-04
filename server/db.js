@@ -179,7 +179,7 @@ const verifyOTP = async (phoneNumber, otp) => {
 
 const findPatientByContactNumber = async (contactNumber) => {
   const res = await pool.query(
-    'SELECT * FROM Patient WHERE patient_contact_number = $1',
+    'SELECT * FROM Contact_info WHERE primary_phone_number = $1',
     [contactNumber]
   );
   return res.rows[0]; // Returns undefined if no patient is found
