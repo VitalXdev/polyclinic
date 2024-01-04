@@ -214,7 +214,48 @@ const getPeopleAheadCount = async (appointmentNumber, doctorId) => {
   return parseInt(result.rows[0].count, 10);
 };
 
+const insertUserContactInfo = async (phone_number,email) => {
+  const res = await pool.query(
+    'INSERT INTO Contact_info (primary_phone_number, primary_email_id) VALUES ($1, $2) RETURNING contact_info_id',
+    [phone_number,email]
+  );
+  return res.rows[0];
+};
 
+const insertUserAuthentication = async (contact_info_id, hashedPassword) => {
+  // Step 1: Derive contact_number from contact_info_id
+  const contactInfoResult = await pool.query(
+    'SELECT primary_phone_number FROM Contact_info WHERE contact_info_id = $1',
+    [contact_info_id]
+  );
+
+  if (contactInfoResult.rows.length === 0) {
+    // Handle the case where no contact info is found for the given ID
+    throw new Error('Contact info not found for the provided ID');
+  }
+
+  const contact_number = contactInfoResult.rows[0].primary_phone_number;
+
+  // Step 2: Find the last OTP and last_authenticated_at for the contact_number
+  const otpResult = await pool.query(
+    'SELECT otp_sent FROM Otp WHERE mobile_number = $1 ORDER BY created_at DESC LIMIT 1',
+    [contact_number]
+  );
+
+  let lastOTP = null;
+    // Check if there are any rows returned by the query
+  if (otpResult.rows.length > 0) {
+    lastOTP = otpResult.rows[0].otp_sent;
+  } else {
+    // Handle the case where no OTP is found for the given contact_number
+    throw new Error('No OTP found for the provided contact_number');
+  }  
+  // Step 3: Insert authentication record with lastOTP and lastAuthenticatedAt
+  await pool.query(
+    'INSERT INTO Authentication (contact_info_id, last_otp, hashed_password) VALUES ($1, $2, $3)',
+    [contact_info_id, lastOTP, hashedPassword]
+  );
+};
 
 const insertUser = async (email, hashedPassword, role, phone_number, isMobileOTPAuthenticated) => {
   const res = await pool.query(
@@ -308,4 +349,4 @@ const updateAppointmentStatuses = async (doctorId) => {
 
 
 
-module.exports = { insertPatient,getTodaysAppointments,getPatientsByDoctorId, updateAppointmentStatus,insertAppointment, findPatientByContactNumber, insertDoctor, updateDoctorQRCode,insertUser, findUserByEmail, setNextPatientStatus ,setPatientStatusTreated,getDoctorIdFromUserId,updateAppointmentStatuses,getPeopleAheadCount,storeOTP, verifyOTP, findUserByPhoneNumber,getDoctorNameFromDoctorId};
+module.exports = { insertPatient,getTodaysAppointments,getPatientsByDoctorId, updateAppointmentStatus,insertAppointment, findPatientByContactNumber, insertDoctor, updateDoctorQRCode,insertUser, findUserByEmail, setNextPatientStatus ,setPatientStatusTreated,getDoctorIdFromUserId,updateAppointmentStatuses, getPeopleAheadCount, storeOTP, verifyOTP, findUserByPhoneNumber, getDoctorNameFromDoctorId, insertUserContactInfo, insertUserAuthentication};
