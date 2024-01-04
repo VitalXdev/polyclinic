@@ -214,7 +214,13 @@ const getPeopleAheadCount = async (appointmentNumber, doctorId) => {
   return parseInt(result.rows[0].count, 10);
 };
 
-
+const insertUserContactInfo = async (phone_number,email) => {
+  const res = await pool.query(
+    'INSERT INTO Contact_info (primary_phone_number, primary_email_id) VALUES ($1, $2) RETURNING contact_info_id',
+    [phone_number,email]
+  );
+  return res.rows[0];
+};
 
 const insertUser = async (email, hashedPassword, role, phone_number, isMobileOTPAuthenticated) => {
   const res = await pool.query(
@@ -308,4 +314,4 @@ const updateAppointmentStatuses = async (doctorId) => {
 
 
 
-module.exports = { insertPatient,getTodaysAppointments,getPatientsByDoctorId, updateAppointmentStatus,insertAppointment, findPatientByContactNumber, insertDoctor, updateDoctorQRCode,insertUser, findUserByEmail, setNextPatientStatus ,setPatientStatusTreated,getDoctorIdFromUserId,updateAppointmentStatuses,getPeopleAheadCount,storeOTP, verifyOTP, findUserByPhoneNumber,getDoctorNameFromDoctorId};
+module.exports = { insertPatient,getTodaysAppointments,getPatientsByDoctorId, updateAppointmentStatus,insertAppointment, findPatientByContactNumber, insertDoctor, updateDoctorQRCode,insertUser, findUserByEmail, setNextPatientStatus ,setPatientStatusTreated,getDoctorIdFromUserId,updateAppointmentStatuses,getPeopleAheadCount,storeOTP, verifyOTP, findUserByPhoneNumber,getDoctorNameFromDoctorId,insertUserContactInfo};
