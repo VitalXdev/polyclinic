@@ -1,5 +1,5 @@
 const express = require('express');
-const { insertPatient, getPatientsByDoctorId, getTodaysAppointments, insertAppointment, findPatientByContactNumber, insertDoctor, updateDoctorQRCode,insertUser, findUserByEmail,setNextPatientStatus ,setPatientStatusTreated ,getDoctorIdFromUserId,updateAppointmentStatuses,getPeopleAheadCount,storeOTP, verifyOTP, findUserByPhoneNumber,updateAppointmentStatus, getDoctorNameFromDoctorId} = require('./db');
+const { insertPatient, getPatientsByDoctorId, getTodaysAppointments, insertAppointment, findPatientByContactNumber, insertDoctor, updateDoctorQRCode,insertUser, findUserByEmail,setNextPatientStatus ,setPatientStatusTreated ,getDoctorIdFromUserId,updateAppointmentStatuses,getPeopleAheadCount,storeOTP, verifyOTP, findUserByPhoneNumber,updateAppointmentStatus, getDoctorNameFromDoctorId,insertUserContactInfo} = require('./db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const app = express();
@@ -230,8 +230,8 @@ app.post('/auth/register', async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Insert user and get user_id
-    const user = await insertUser(email, hashedPassword, role, phone_number, isMobileOTPAuthenticated);
+    // Insert data into contact_info and store it's result to variable contact
+    const contact = await insertUserContactInfo(phone_number,email);
 
     let doctor;
     if (role === 'doctor') {
