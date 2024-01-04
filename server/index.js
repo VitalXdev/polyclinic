@@ -1,5 +1,5 @@
 const express = require('express');
-const { insertPatient, getPatientsByDoctorId, getTodaysAppointments, insertAppointment, findPatientByContactNumber, insertDoctor, updateDoctorQRCode,insertUser, findUserByEmail,setNextPatientStatus ,setPatientStatusTreated ,getDoctorIdFromUserId,updateAppointmentStatuses,getPeopleAheadCount,storeOTP, verifyOTP, findUserByPhoneNumber,updateAppointmentStatus, getDoctorNameFromDoctorId,insertUserContactInfo} = require('./db');
+const { insertPatient, getPatientsByDoctorId, getTodaysAppointments, insertAppointment, findPatientByContactNumber, insertDoctor, updateDoctorQRCode,insertUser, findUserByEmail,setNextPatientStatus ,setPatientStatusTreated ,getDoctorIdFromUserId,updateAppointmentStatuses,getPeopleAheadCount,storeOTP, verifyOTP, findUserByPhoneNumber,updateAppointmentStatus, getDoctorNameFromDoctorId,insertUserContactInfo,insertUserAuthentication} = require('./db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const app = express();
@@ -232,6 +232,9 @@ app.post('/auth/register', async (req, res) => {
 
     // Insert data into contact_info and store it's result to variable contact
     const contact = await insertUserContactInfo(phone_number,email);
+
+    // Insert into authentication table
+    await insertUserAuthentication(contact.contact_info_id,hashedPassword)  
 
     let doctor;
     if (role === 'doctor') {
