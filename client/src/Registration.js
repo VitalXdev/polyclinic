@@ -7,9 +7,10 @@ import InputComponent from "./components/InputComponent";
 const Registration = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
+  const [role, setRole] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [doctorName, setDoctorName] = useState("");
+  const [name, setName] = useState("");
   const [clinicName, setClinicName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
@@ -88,10 +89,6 @@ const Registration = () => {
       alert("Passwords do not match"); // Simple alert, consider a better UX for displaying errors
       return;
     }
-
-    // Define the role, for example, 'doctor' or 'receptionist'
-    const role = "doctor"; // This should be dynamic based on the form, if you have different roles to register
-
     try {
       const response = await fetch(
         `${process.env.REACT_APP_API_URL}/auth/register`,
@@ -104,7 +101,7 @@ const Registration = () => {
             email,
             password,
             role,
-            doctor_name: doctorName,
+            name: name,
             clinic_name: clinicName,
             phone_number: phoneNumber,
             isMobileOTPAuthenticated: true,
@@ -265,11 +262,22 @@ const Registration = () => {
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       type="password"
                     />
+                    <InputComponent 
+                      label="Role"
+                      id="role"
+                      value={role}
+                      onChange={(e) => setRole(e.target.value)}
+                      type="select"
+                      options={[
+                        { value: "doctor", label: "Doctor" },
+                        { value: "receptionist", label: "Receptionist" },
+                      ]}
+                    />
                     <InputComponent
-                      label="Doctor Name"
-                      id="doctorName"
-                      value={doctorName}
-                      onChange={(e) => setDoctorName(e.target.value)}
+                      label="Name"
+                      id="name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
                       type="text"
                     />
                     <InputComponent
@@ -316,12 +324,12 @@ const Registration = () => {
                       onChange={(e) => setConfirmPassword(e.target.value)}
                     />
                     <TextField
-                      label="Doctor Name"
+                      label="Name"
                       variant="outlined"
                       fullWidth
                       margin="normal"
-                      value={doctorName}
-                      onChange={(e) => setDoctorName(e.target.value)}
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
                     />
                     <TextField
                       label="Clinic Name"
