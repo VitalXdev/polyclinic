@@ -4,7 +4,6 @@
 /client/build
 /server/node_modules
 /client/.env.local
-
 # testing
 /coverage
 

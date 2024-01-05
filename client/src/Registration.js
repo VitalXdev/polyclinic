@@ -8,6 +8,7 @@ const Registration = () => {
   const navigate = useNavigate();
   const [part, setPart] = useState("");
   const [email, setEmail] = useState("");
+  const [role, setRole] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [doctorName, setDoctorName] = useState("");
@@ -93,19 +94,6 @@ const Registration = () => {
       alert("Passwords do not match"); // Simple alert, consider a better UX for displaying errors
       return;
     }
-
-    // Here Is the Implementation of Dynamic Role
-    // Define the role, for example, 'doctor' or 'receptionist'
-    let role = "doctor"; // This should be dynamic based on the form, if you have different roles to register
-
-    if (part === "doctor") {
-      role = "doctor";
-    } else if (part === "receptionist") {
-      role = "receptionist";
-    }
-
-    setDoctorName(name);
-    console.log(doctorName)
     try {
       const response = await fetch(
         `${process.env.REACT_APP_API_URL}/auth/register`,
@@ -279,22 +267,22 @@ const Registration = () => {
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       type="password"
                     />
-                    <InputComponent
+                    <InputComponent 
                       label="Role"
                       id="role"
-                      value={part}
-                      onChange={(e) => setPart(e.target.value)}
+                      value={role}
+                      onChange={(e) => setRole(e.target.value)}
                       type="select"
                       options={[
                         { value: "doctor", label: "Doctor" },
                         { value: "receptionist", label: "Receptionist" },
                       ]}
                     />
-                     <InputComponent
-                      label="Name"
-                      id="name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
+    <InputComponent
+                      label="Doctor Name"
+                      id="doctorName"
+                      value={doctorName}
+                      onChange={(e) => setDoctorName(e.target.value)}
                       type="text"
                     />
                     <InputComponent

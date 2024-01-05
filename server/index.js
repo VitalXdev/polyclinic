@@ -1,10 +1,5 @@
 const express = require('express');
-const { insertPatient, getPatientsByDoctorId, getTodaysAppointments, insertAppointment, findPatientByContactNumber, 
-  insertDoctor, updateDoctorQRCode,insertUser, findUserByEmail,setNextPatientStatus ,setPatientStatusTreated ,
-  getDoctorIdFromUserId,updateAppointmentStatuses,getPeopleAheadCount,
-  storeOTP, verifyOTP, findUserByPhoneNumber,updateAppointmentStatus,
-   getDoctorNameFromDoctorId,insertUserContactInfo,insertUserAuthentication,insertUserDetails,
-  insertclinicDetails} = require('./db');
+const { insertPatient, getPatientsByDoctorId, getTodaysAppointments, insertAppointment, findPatientByContactNumber, insertDoctor, updateDoctorQRCode,insertUser, findUserByEmail,setNextPatientStatus ,setPatientStatusTreated ,getDoctorIdFromUserId,updateAppointmentStatuses,getPeopleAheadCount,storeOTP, verifyOTP, findUserByPhoneNumber,updateAppointmentStatus, getDoctorNameFromDoctorId,insertUserContactInfo,insertUserAuthentication,insertUserDetails,insertClinicDetails,insertStaffDetails} = require('./db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const app = express();
@@ -240,14 +235,23 @@ app.post('/auth/register', async (req, res) => {
 
 
     // Insert into authentication table
-    await insertUserAuthentication(contact.contact_info_id,hashedPassword)  
+    await insertUserAuthentication(contact.contact_info_id,hashedPassword) 
+    
+    // Insert data into user table and store it's result to variable newuser
+    const newuser=await insertUserDetails(doctor_name,contact.contact_info_id);
 
     // Insert into Clinic Table
-    const newclient=await insertclinicDetails(clinic_name);
-      
-    // Insert into User (Name,Contact_id) {storing user data}
-     const contact_id=contact.contact_info_id;
-    const newuser=await insertUserDetails(doctor_name,contact_id);
+    const newclient=await insertClinicDetails(clinic_name,contact.contact_info_id);
+
+    // Insert data into Staff Table
+    let rolenum;
+    if (role === 'doctor') {
+        rolenum = 1;
+    } else {
+        rolenum = 2;
+    }
+    const newstaff = await insertStaffDetails(newuser.user_id, newclient.clinic_id, rolenum);
+  
     let doctor;
     if (role === 'doctor') {
       // Insert doctor and get doctor_id

@@ -23,6 +23,34 @@ const insertPatient = async (
   return res.rows[0];
 };
 
+// Query to Insert NewUser Details
+const insertUserDetails=async (doctor_name,contactid)=>{
+  const res=await pool.query(
+   'INSERT INTO public.User (name,contact_info_id) VALUES ($1,$2) RETURNING user_id',
+   [doctor_name,contactid]
+  );
+  return res.rows[0];
+ }
+
+// Query to insert NewClinic Details
+const insertClinicDetails = async (clinic_name,Contactinfoid) => {
+  const res = await pool.query(
+    "INSERT INTO Clinic (clinic_name,clinic_contact_info_id) VALUES ($1,$2) RETURNING clinic_id",
+    [clinic_name,Contactinfoid]
+  );
+  return res.rows[0];
+};
+
+// Query to insert Staff Details
+const insertStaffDetails = async (UserId, ClinicId, rolenum) => {
+  const todaysdate = new Date(); // Start Date
+  const res = await pool.query(
+    "INSERT INTO Staff (user_id, employer_id, employer_type, role, status, start_date) VALUES ($1, $2, 1, $3, 1, $4) RETURNING staff_id",
+    [UserId, ClinicId, rolenum, todaysdate]
+  );
+  return res.rows[0];
+};
+
 const getDoctorIdFromUserId = async (userId) => {
   const res = await pool.query(
     "SELECT doctor_id FROM doctor WHERE user_id = $1",
@@ -390,30 +418,8 @@ const updateAppointmentStatuses = async (doctorId) => {
   }
 };
 
-module.exports = {
-  insertPatient,
-  getTodaysAppointments,
-  getPatientsByDoctorId,
-  updateAppointmentStatus,
-  insertAppointment,
-  findPatientByContactNumber,
-  insertDoctor,
-  updateDoctorQRCode,
-  insertUser,
-  findUserByEmail,
-  setNextPatientStatus,
-  setPatientStatusTreated,
-  getDoctorIdFromUserId,
-  updateAppointmentStatuses,
-  getPeopleAheadCount,
-  storeOTP,
-  verifyOTP,
-  findUserByPhoneNumber,
-  getDoctorNameFromDoctorId,
-  insertUserContactInfo,
-  insertUserAuthentication,
-  insertUserDetails,
-  insertclinicDetails
-};
 
 
+
+
+module.exports = { insertPatient,getTodaysAppointments,getPatientsByDoctorId, updateAppointmentStatus,insertAppointment, findPatientByContactNumber, insertDoctor, updateDoctorQRCode,insertUser, findUserByEmail, setNextPatientStatus ,setPatientStatusTreated,getDoctorIdFromUserId,updateAppointmentStatuses, getPeopleAheadCount, storeOTP, verifyOTP, findUserByPhoneNumber, getDoctorNameFromDoctorId, insertUserContactInfo, insertUserAuthentication,insertClinicDetails,insertUserDetails,insertStaffDetails};
