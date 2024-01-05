@@ -328,7 +328,7 @@ const Registration = () => {
                       variant="outlined"
                       fullWidth
                       margin="normal"
-                      value={doctorname}
+                      value={doctorName}
                       onChange={(e) => setDoctorName(e.target.value)}
                     />
                     <TextField
