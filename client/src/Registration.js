@@ -10,7 +10,7 @@ const Registration = () => {
   const [role, setRole] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [name, setName] = useState("");
+  const [doctorName, setDoctorName] = useState("");
   const [clinicName, setClinicName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
@@ -101,7 +101,7 @@ const Registration = () => {
             email,
             password,
             role,
-            name: name,
+            doctor_name: doctorName,
             clinic_name: clinicName,
             phone_number: phoneNumber,
             isMobileOTPAuthenticated: true,
@@ -273,11 +273,11 @@ const Registration = () => {
                         { value: "receptionist", label: "Receptionist" },
                       ]}
                     />
-                    <InputComponent
-                      label="Name"
-                      id="name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
+    <InputComponent
+                      label="Doctor Name"
+                      id="doctorName"
+                      value={doctorName}
+                      onChange={(e) => setDoctorName(e.target.value)}
                       type="text"
                     />
                     <InputComponent
@@ -324,12 +324,12 @@ const Registration = () => {
                       onChange={(e) => setConfirmPassword(e.target.value)}
                     />
                     <TextField
-                      label="Name"
+                      label="Doctor Name"
                       variant="outlined"
                       fullWidth
                       margin="normal"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
+                      value={doctorname}
+                      onChange={(e) => setDoctorName(e.target.value)}
                     />
                     <TextField
                       label="Clinic Name"
