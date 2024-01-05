@@ -233,6 +233,7 @@ app.post('/auth/register', async (req, res) => {
     // Insert data into contact_info and store it's result to variable contact
     const contact = await insertUserContactInfo(phone_number,email);
 
+
     // Insert into authentication table
     await insertUserAuthentication(contact.contact_info_id,hashedPassword) 
     

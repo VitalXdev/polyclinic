@@ -6,11 +6,13 @@ import InputComponent from "./components/InputComponent";
 
 const Registration = () => {
   const navigate = useNavigate();
+  const [part, setPart] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("doctor");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [doctorName, setDoctorName] = useState("");
+  const [name, setName] = useState("");
   const [clinicName, setClinicName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
@@ -34,8 +36,9 @@ const Registration = () => {
       );
       setStep(2);
       const data = await response.json();
+
       if (data.success) {
-        
+        console.log(data.message);
         // Handle UI changes, like showing an input field for entering OTP
       } else {
         // Handle the case where OTP sending failed
@@ -53,31 +56,33 @@ const Registration = () => {
       phoneNumber: phoneNumber,
       otp: otp,
     };
-  
+
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/verifyOTP`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(otpPayload),
-      });
-  
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/verifyOTP`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(otpPayload),
+        }
+      );
+      setStep(3);
       const data = await response.json();
-  
-      if (response.ok) {
-        console.log('Verification success:', data);
+
+      if (data.success) {
+        console.log(data.message);
+        // Set your state based on the response
         setIsOtpVerified(true);
-        setStep(3); // Move to next step only if OTP is verified
       } else {
-        console.error("Verification failed:", data.message);
+        console.error("Invalid OTP");
+        // Set your state based on the response
         setIsOtpVerified(false);
-        alert(data.message); // Display error message from server
       }
     } catch (error) {
       console.error("Error verifying OTP:", error);
-      setIsOtpVerified(false);
-      alert("Error verifying OTP"); // Generic error message
+      // Handle errors, maybe show a message to the user
     }
   };
 
