@@ -45,6 +45,15 @@ const insertStaffDetails = async (UserId, ClinicId, rolenum) => {
   return res.rows[0];
 };
 
+const insertDoctorData = async (userId, contactId) => {
+  // Insert data to Doctor Table
+  const res = await pool.query(
+    "INSERT INTO Doctor (user_id, doctor_contact_info_id) VALUES($1,$2) RETURNING doctor_id",
+    [userId, contactId]
+  );
+  return res.rows[0]; 
+};
+
 const getDoctorIdFromUserId = async (userId) => {
   const res = await pool.query(
     'SELECT doctor_id FROM doctor WHERE user_id = $1',
@@ -377,4 +386,4 @@ const updateAppointmentStatuses = async (doctorId) => {
 
 
 
-module.exports = { insertPatient,getTodaysAppointments,getPatientsByDoctorId, updateAppointmentStatus,insertAppointment, findPatientByContactNumber, insertDoctor, updateDoctorQRCode,insertUser, findUserByEmail, setNextPatientStatus ,setPatientStatusTreated,getDoctorIdFromUserId,updateAppointmentStatuses, getPeopleAheadCount, storeOTP, verifyOTP, findUserByPhoneNumber, getDoctorNameFromDoctorId, insertUserContactInfo, insertUserAuthentication,insertClinicDetails,insertUserDetails,insertStaffDetails};
+module.exports = { insertPatient,getTodaysAppointments,getPatientsByDoctorId, updateAppointmentStatus,insertAppointment, findPatientByContactNumber, insertDoctor, updateDoctorQRCode,insertUser, findUserByEmail, setNextPatientStatus ,setPatientStatusTreated,getDoctorIdFromUserId,updateAppointmentStatuses, getPeopleAheadCount, storeOTP, verifyOTP, findUserByPhoneNumber, getDoctorNameFromDoctorId, insertUserContactInfo, insertUserAuthentication,insertClinicDetails,insertUserDetails,insertStaffDetails, insertDoctorData};
