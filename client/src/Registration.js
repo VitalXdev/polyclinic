@@ -7,7 +7,7 @@ import InputComponent from "./components/InputComponent";
 const Registration = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState("doctor");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [doctorName, setDoctorName] = useState("");
@@ -117,7 +117,7 @@ const Registration = () => {
         if (role === "doctor") {
           navigate("/doctorview");
         } else {
-          // Handle other roles or a default case
+          navigate("/doctorview");
         }
       } else {
         // Handle errors, such as invalid input or user already exists

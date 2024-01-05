@@ -1,5 +1,5 @@
 const express = require('express');
-const { insertPatient, getPatientsByDoctorId, getTodaysAppointments, insertAppointment, findPatientByContactNumber, insertDoctor, updateDoctorQRCode,insertUser, findUserByEmail,setNextPatientStatus ,setPatientStatusTreated ,getDoctorIdFromUserId,updateAppointmentStatuses,getPeopleAheadCount,storeOTP, verifyOTP, findUserByPhoneNumber,updateAppointmentStatus, getDoctorNameFromDoctorId,insertUserContactInfo,insertUserAuthentication,insertUserDetails,insertClinicDetails,insertStaffDetails} = require('./db');
+const { insertPatient, getPatientsByDoctorId, getTodaysAppointments, insertAppointment, findPatientByContactNumber, insertDoctor, updateDoctorQRCode,insertUser, findUserByEmail,setNextPatientStatus ,setPatientStatusTreated ,getDoctorIdFromUserId,updateAppointmentStatuses,getPeopleAheadCount,storeOTP, verifyOTP, findUserByPhoneNumber,updateAppointmentStatus, getDoctorNameFromDoctorId,insertUserContactInfo,insertUserAuthentication,insertUserDetails,insertClinicDetails,insertStaffDetails, insertDoctorData} = require('./db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const app = express();
@@ -237,39 +237,28 @@ app.post('/auth/register', async (req, res) => {
     await insertUserAuthentication(contact.contact_info_id,hashedPassword) 
     
     // Insert data into user table and store it's result to variable newuser
-    const newuser=await insertUserDetails(doctor_name,contact.contact_info_id);
+    const newUser=await insertUserDetails(doctor_name,contact.contact_info_id);
 
     // Insert into Clinic Table
-    const newclient=await insertClinicDetails(clinic_name,contact.contact_info_id);
+    const newClient=await insertClinicDetails(clinic_name,contact.contact_info_id);
 
-    // Insert data into Staff Table
-    let rolenum;
+    // Insert data into Staff Table    
+    let roleNum;
+    let newDoctor;
     if (role === 'doctor') {
-        rolenum = 1;
+        newDoctor= await insertDoctorData(newUser.user_id,contact.contact_info_id)
+        roleNum = 1;
     } else {
-        rolenum = 2;
+        roleNum = 2;
     }
-    const newstaff = await insertStaffDetails(newuser.user_id, newclient.clinic_id, rolenum);
-  
-    let doctor;
-    if (role === 'doctor') {
-      // Insert doctor and get doctor_id
-      doctor = await insertDoctor(user.user_id, doctor_name, clinic_name);
-
-      // Generate QR code URL with doctor_id
-      const qrCodeURL = `https://thriving-bonbon-27d691.netlify.app/?doctorId=${doctor.doctor_id}`;
-      await updateDoctorQRCode(doctor.doctor_id, qrCodeURL);
-
-      doctor.qr_code_url = qrCodeURL;
-    }
+    const newStaff = await insertStaffDetails(newUser.user_id, newClient.clinic_id, roleNum);
 
     // Create a token
-    const doctorId= await getDoctorIdFromUserId(user.user_id);
-    const doctorName= await getDoctorNameFromDoctorId(doctorId);
-    const token = jwt.sign({ user_id: user.user_id, role,doctor_id: doctorId ,doctorName: doctorName }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
+    const doctorId = newDoctor ? newDoctor.doctor_id : null; // Check if newDoctor is defined
+    const doctorName= newUser.doctor_name
+    const token = jwt.sign({ user_id: newUser.user_id, role,doctor_id: doctorId ,doctorName: doctorName }, process.env.JWT_SECRET, { expiresIn: '1h' });
     // Respond with the token and user info
-    res.status(201).json({ token, user, doctor }); // doctor will be undefined if role is not 'doctor'
+    res.status(201).json({ token, newUser, newDoctor }); // doctor will be undefined if role is not 'doctor'
   } catch (error) {
     console.error('Registration error:', error);
     res.status(500).send('Server error');
