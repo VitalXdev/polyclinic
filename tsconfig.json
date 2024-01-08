@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+      "target": "es2020",
+      "module": "commonjs",
+      "outDir": "./dist",
+      "rootDir": "./server/src", // Updated to point to the new src directory inside the server folder
+      "strict": true,
+      "esModuleInterop": true,
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true
+    },
+    "include": ["server/src/**/*"], // Updated include path
+    "exclude": ["node_modules", "dist"]
+  }
+  

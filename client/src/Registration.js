@@ -21,7 +21,7 @@ const Registration = () => {
   const handleSendOtp = async () => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/generateOTP`,
+        `${process.env.REACT_APP_API_URL}/auth/generateOTP`,
         {
           method: "POST",
           headers: {
@@ -55,7 +55,7 @@ const Registration = () => {
     };
   
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/verifyOTP`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/verifyOTP`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
