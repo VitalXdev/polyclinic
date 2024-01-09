@@ -35,3 +35,4 @@ export const verifyOTP = async (phoneNumber: string, otp: string): Promise<boole
 
     return false;
 };
+

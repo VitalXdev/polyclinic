@@ -16,6 +16,7 @@ const datasource_1 = require("./datasource");
 // import patientRoutes from "./routes/patientRoutes"; // Import the patient routes
 const port = process.env.PORT || 5001;
 const otpRoutes_1 = __importDefault(require("./routes/otpRoutes"));
+const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
 const corsOptions = {
     origin: ['http://localhost:3000', 'https://thriving-bonbon-27d691.netlify.app', 'https://app.vitalx.in', 'https://dev.vitalx.in', 'https://admirable-taiyaki-b2b323.netlify.app', 'https://beta.vitalx.in'],
     optionsSuccessStatus: 200,
@@ -30,6 +31,7 @@ datasource_1.AppDataSource.initialize()
     // Set up routes
     // app.use('/patients', patientRoutes); // Use the patient routes
     app.use('/auth', otpRoutes_1.default); //for OTP routes
+    app.use('/auth', authRoutes_1.default);
     // Set up the HTTP and WebSocket server
     const httpServer = createServer(app);
     const io = new Server(httpServer, {
