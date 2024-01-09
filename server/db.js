@@ -259,6 +259,15 @@ const insertUserContactInfo = async (phone_number,email) => {
   return res.rows[0];
 };
 
+// Query to Inter NewUser Details 
+const insertUserDetails=async (doctor_name,contact_id)=>{
+  const res=await pool.query(
+    'INSERT INTO public.User (name,contact_info_id) VALUES ($1,$2) RETURNING user_id',
+   [doctor_name,contact_id]
+  );
+  return res.rows[0];
+ }
+
 const insertUserAuthentication = async (contact_info_id, hashedPassword) => {
   // Step 1: Derive contact_number from contact_info_id
   const contactInfoResult = await pool.query(
@@ -386,4 +395,8 @@ const updateAppointmentStatuses = async (doctorId) => {
 
 
 
-module.exports = { insertPatient,getTodaysAppointments,getPatientsByDoctorId, updateAppointmentStatus,insertAppointment, findPatientByContactNumber, insertDoctor, updateDoctorQRCode,insertUser, findUserByEmail, setNextPatientStatus ,setPatientStatusTreated,getDoctorIdFromUserId,updateAppointmentStatuses, getPeopleAheadCount, storeOTP, verifyOTP, findUserByPhoneNumber, getDoctorNameFromDoctorId, insertUserContactInfo, insertUserAuthentication,insertClinicDetails,insertUserDetails,insertStaffDetails, insertDoctorData};
+module.exports = { insertPatient,getTodaysAppointments,getPatientsByDoctorId, 
+  updateAppointmentStatus,insertAppointment, findPatientByContactNumber, insertDoctor, updateDoctorQRCode,insertUser, findUserByEmail, setNextPatientStatus ,setPatientStatusTreated,getDoctorIdFromUserId,updateAppointmentStatuses, getPeopleAheadCount, 
+  storeOTP, verifyOTP, findUserByPhoneNumber, getDoctorNameFromDoctorId, insertUserContactInfo, 
+  insertUserAuthentication,insertUserDetails};
+  

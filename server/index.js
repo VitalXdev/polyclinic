@@ -1,5 +1,9 @@
 const express = require('express');
-const { insertPatient, getPatientsByDoctorId, getTodaysAppointments, insertAppointment, findPatientByContactNumber, insertDoctor, updateDoctorQRCode,insertUser, findUserByEmail,setNextPatientStatus ,setPatientStatusTreated ,getDoctorIdFromUserId,updateAppointmentStatuses,getPeopleAheadCount,storeOTP, verifyOTP, findUserByPhoneNumber,updateAppointmentStatus, getDoctorNameFromDoctorId,insertUserContactInfo,insertUserAuthentication,insertUserDetails,insertClinicDetails,insertStaffDetails, insertDoctorData} = require('./db');
+const { insertPatient, getPatientsByDoctorId, getTodaysAppointments, insertAppointment, findPatientByContactNumber, 
+  insertDoctor, updateDoctorQRCode,insertUser, findUserByEmail,setNextPatientStatus ,setPatientStatusTreated ,
+  getDoctorIdFromUserId,updateAppointmentStatuses,getPeopleAheadCount,
+  storeOTP, verifyOTP, findUserByPhoneNumber,updateAppointmentStatus,
+   getDoctorNameFromDoctorId,insertUserContactInfo,insertUserAuthentication,insertUserDetails} = require('./db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const app = express();
@@ -233,18 +237,14 @@ app.post('/auth/register', async (req, res) => {
     // Insert data into contact_info and store it's result to variable contact
     const contact = await insertUserContactInfo(phone_number,email);
 
+
     // Insert into authentication table
-    await insertUserAuthentication(contact.contact_info_id,hashedPassword) 
-    
-    // Insert data into user table and store it's result to variable newuser
-    const newUser=await insertUserDetails(doctor_name,contact.contact_info_id);
+    await insertUserAuthentication(contact.contact_info_id,hashedPassword)  
 
-    // Insert into Clinic Table
-    const newClient=await insertClinicDetails(clinic_name,contact.contact_info_id);
-
-    // Insert data into Staff Table    
-    let roleNum;
-    let newDoctor;
+    // Insert into User (Name,Contact_id) {storing user data}
+     const contact_id=contact.contact_info_id;
+    const newuser=await insertUserDetails(doctor_name,contact_id);
+    let doctor;
     if (role === 'doctor') {
         newDoctor= await insertDoctorData(newUser.user_id,contact.contact_info_id)
         roleNum = 1;
